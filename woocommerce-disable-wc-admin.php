@@ -20,6 +20,52 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 add_filter( 'woocommerce_admin_disabled', '__return_true', 500 );
 
+add_filter( 'woocommerce_data_stores', function( $data_stores ) {
+	include_once( __DIR__ . '/data-store-admin-note-replacement.php' );
+
+	$data_stores['admin-note'] = new DataStoreADminNoteReplacement();
+
+	return $data_stores;
+}, 1000 );
+
+add_action( 'woocommerce_loaded', function() {
+	if ( ! function_exists( 'wc_admin_url' ) ) {
+		function wc_admin_url( $path = null, $query = array() ) {
+			return '';
+		}
+	}
+
+	if ( ! function_exists( 'wc_admin_is_connected_page' ) ) {
+		function wc_admin_is_connected_page() {
+			return false;
+		}
+	}
+
+	if ( ! function_exists( 'wc_admin_connect_page' ) ) {
+		function wc_admin_connect_page( $options ) {
+			return false;
+		}
+	}
+
+	if ( ! function_exists( 'wc_admin_register_page' ) ) {
+		function wc_admin_register_page( $options ) {
+			return false;
+		}
+	}
+
+	if ( ! function_exists( 'wc_admin_is_registered_page' ) ) {
+		function wc_admin_is_registered_page() {
+			return false;
+		}
+	}
+
+	if ( ! function_exists( 'wc_admin_get_breadcrumbs' ) ) {
+		function wc_admin_get_breadcrumbs() {
+			return array();
+		}
+	}
+} );
+
 add_action( 'admin_init', function() {
 	add_filter( 'woocommerce_admin_features', function() {
 		return array();
@@ -47,5 +93,16 @@ add_action( 'admin_init', function() {
 		remove_filter( 'woocommerce_settings-wc_admin', array( $classname, 'add_settings' ) );
 		remove_action( 'admin_head', array( $classname, 'remove_notices' ) );
 		remove_action( 'admin_head', array( $classname, 'smart_app_banner' ) );
+	}
+
+	$classname = 'Automattic\WooCommerce\Admin\Features\Features';
+
+	if ( class_exists( $classname ) ) {
+		remove_filter( 'woocommerce_get_sections_advanced', array( $classname, 'add_features_section' ) );
+		remove_filter( 'woocommerce_get_settings_advanced', array( $classname, 'add_features_settings' ), 10 );
+		remove_action( 'admin_enqueue_scripts', array( $classname, 'maybe_load_beta_features_modal' ) );
+		remove_action( 'admin_enqueue_scripts', array( $classname, 'load_scripts' ), 15 );
+		remove_filter( 'admin_body_class', array( $classname, 'add_admin_body_classes' ) );
+		remove_filter( 'update_option_woocommerce_allow_tracking', array( $classname, 'maybe_disable_features' ), 10 );
 	}
 }, 100 );
