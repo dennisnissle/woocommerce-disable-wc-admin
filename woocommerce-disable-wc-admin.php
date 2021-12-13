@@ -28,7 +28,7 @@ add_filter( 'woocommerce_data_stores', function( $data_stores ) {
 	return $data_stores;
 }, 1000 );
 
-add_action( 'woocommerce_loaded', function() {
+add_action( 'plugins_loaded', function() {
 	if ( ! function_exists( 'wc_admin_url' ) ) {
 		function wc_admin_url( $path = null, $query = array() ) {
 			return '';
@@ -64,7 +64,7 @@ add_action( 'woocommerce_loaded', function() {
 			return array();
 		}
 	}
-} );
+}, 1000 );
 
 add_action( 'admin_init', function() {
 	add_filter( 'woocommerce_admin_features', function() {
