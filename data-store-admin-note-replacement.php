@@ -4,7 +4,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * WC Admin Note Data Store (Custom Tables)
  */
-class DataStoreADminNoteReplacement extends \Automattic\WooCommerce\Admin\Notes\DataStore {
+class DataStoreAdminNoteReplacement extends \Automattic\WooCommerce\Admin\Notes\DataStore {
 
 	public function create( &$note ) {
 

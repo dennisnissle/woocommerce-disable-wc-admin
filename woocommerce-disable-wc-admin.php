@@ -23,16 +23,24 @@ add_filter( 'woocommerce_admin_disabled', '__return_true', 500 );
 add_filter( 'woocommerce_data_stores', function( $data_stores ) {
 	include_once( __DIR__ . '/data-store-admin-note-replacement.php' );
 
-	$data_stores['admin-note'] = new DataStoreADminNoteReplacement();
+	$data_stores['admin-note'] = new DataStoreAdminNoteReplacement();
 
 	return $data_stores;
 }, 1000 );
 
 add_action( 'plugins_loaded', function() {
-	if ( ! function_exists( 'wc_admin_url' ) ) {
-		function wc_admin_url( $path = null, $query = array() ) {
-			return '';
-		}
+	$loader = 'Automattic\WooCommerce\Admin\Loader';
+
+	if ( class_exists( $loader ) ) {
+		// Handler for WooCommerce and WooCommerce Admin plugin activation.
+		remove_action( 'woocommerce_activated_plugin', array( $loader, 'activated_plugin' ) );
+		remove_action( 'activated_plugin', array( $loader, 'activated_plugin' ) );
+	}
+
+	$composer_package = 'Automattic\WooCommerce\Admin\Composer\Package';
+
+	if ( class_exists( $composer_package ) ) {
+		remove_action( 'woocommerce_init', array( $composer_package, 'check_outdated_wca_plugin' ) );
 	}
 
 	if ( ! function_exists( 'wc_admin_is_connected_page' ) ) {
