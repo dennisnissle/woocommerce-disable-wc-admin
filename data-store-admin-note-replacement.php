@@ -28,7 +28,7 @@ class DataStoreAdminNoteReplacement extends \Automattic\WooCommerce\Admin\Notes\
 	 * @param array $args Query arguments.
 	 * @return array An array of objects containing a note id.
 	 */
-	public function get_notes( $args = array() ) {
+	public function get_notes( $args = array(), $context = false ) {
 		return array();
 	}
 
@@ -39,7 +39,7 @@ class DataStoreAdminNoteReplacement extends \Automattic\WooCommerce\Admin\Notes\
 	 * @param string $status Comma separated list of statuses.
 	 * @return array An array of objects containing a note id.
 	 */
-	public function get_notes_count( $type = array(), $status = array() ) {
+	public function get_notes_count( $type = array(), $status = array(), $context = false ) {
 		return array();
 	}
 
@@ -49,7 +49,7 @@ class DataStoreAdminNoteReplacement extends \Automattic\WooCommerce\Admin\Notes\
 	 *  @param array $args Array of args to pass.
 	 * @return string Where clauses for the query.
 	 */
-	public function get_notes_where_clauses( $args = array() ) {
+	public function get_notes_where_clauses( $args = array(), $context = false ) {
 		return '';
 	}
 

@@ -29,7 +29,12 @@ add_filter( 'woocommerce_data_stores', function( $data_stores ) {
 }, 1000 );
 
 add_action( 'plugins_loaded', function() {
-	$loader = 'Automattic\WooCommerce\Admin\Loader';
+	$loader   = 'Automattic\WooCommerce\Admin\Loader';
+	$features = 'Automattic\WooCommerce\Admin\Features\Features';
+
+	if ( class_exists( $features ) ) {
+		$loader = $features;
+	}
 
 	if ( class_exists( $loader ) ) {
 		// Handler for WooCommerce and WooCommerce Admin plugin activation.
@@ -74,12 +79,31 @@ add_action( 'plugins_loaded', function() {
 	}
 }, 1000 );
 
+add_filter( 'woocommerce_admin_features', function() {
+	return array();
+}, 1000 );
+
 add_action( 'admin_init', function() {
 	add_filter( 'woocommerce_admin_features', function() {
 		return array();
 	}, 100 );
 
 	$classname = 'Automattic\WooCommerce\Admin\Loader';
+	$features  = 'Automattic\WooCommerce\Admin\Features\Features';
+	$assets    = 'Automattic\WooCommerce\Internal\Admin\WCAdminAssets';
+
+	if ( class_exists( $assets ) ) {
+		$instance  = $assets::get_instance();
+
+		remove_action( 'admin_enqueue_scripts', array( $instance, 'register_scripts' ) );
+
+		remove_action( 'admin_enqueue_scripts', array( $instance, 'inject_wc_settings_dependencies' ), 14 );
+		remove_action( 'admin_enqueue_scripts', array( $instance, 'enqueue_assets' ), 15 );
+	}
+
+	if ( class_exists( $features ) ) {
+		$classname = $features;
+	}
 
 	if ( class_exists( $classname ) ) {
 		$instance  = $classname::get_instance();
